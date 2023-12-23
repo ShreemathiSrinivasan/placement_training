@@ -1,0 +1,43 @@
+#include <stdlib.h>
+#include <string.h>
+
+char* digitLetters[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+void generateCombinations(char* digits, int index, char* current, char** result, int* count) {
+    if (digits[index] == '\0') {
+        result[*count] = (char*)malloc(strlen(current) + 1);
+        strcpy(result[*count], current);
+        (*count)++;
+        return;
+    }
+
+    int digit = digits[index] - '0';
+    int lettersLen = strlen(digitLetters[digit]);
+
+    for (int i = 0; i < lettersLen; i++) {
+        current[index] = digitLetters[digit][i];
+        generateCombinations(digits, index + 1, current, result, count);
+    }
+}
+
+char** letterCombinations(char* digits, int* returnSize) {
+    int digitsLen = strlen(digits);
+    if (digitsLen == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int totalCombinations = 1;
+    for (int i = 0; i < digitsLen; i++) {
+        totalCombinations *= strlen(digitLetters[digits[i] - '0']);
+    }
+
+    char** result = (char**)malloc(totalCombinations * sizeof(char*));
+    *returnSize = 0;
+
+    char* current = (char*)malloc(digitsLen + 1);
+    generateCombinations(digits, 0, current, result, returnSize);
+
+    free(current);
+    return result;
+}
