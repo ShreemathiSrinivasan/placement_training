@@ -1,27 +1,51 @@
 PROGRAM 1
 
+call by value
+
 #include <stdio.h>
 
+// Function to swap values using Call By Value
+void swapByValue(int x, int y) {
+    int temp;
+    temp = x;
+    x = y;
+    y = temp;
+}
+
 int main() {
-    int matrix[3][3];
-    
-    // Get values from the user
-    printf("Enter values for the 3x3 matrix:\n");
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            printf("Enter element at position [%d][%d]: ", i + 1, j + 1);
-            scanf("%d", &matrix[i][j]);
-        }
-    }
-    
-    // Display the matrix
-    printf("\nMatrix:\n");
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            printf("%d ", matrix[i][j]);
-        }
-        printf("\n");
-    }
+    int a = 5, b = 10;
+
+    printf("Before swapping using Call By Value: a = %d, b = %d\n", a, b);
+
+    // Call the function passing values
+    swapByValue(a, b);
+
+    printf("After swapping using Call By Value: a = %d, b = %d\n", a, b);
+
+    return 0;
+}
+
+call by reference
+
+#include <stdio.h>
+
+// Function to swap values using Call By Reference
+void swapByReference(int *x, int *y) {
+    int temp;
+    temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+int main() {
+    int a = 5, b = 10;
+
+    printf("Before swapping using Call By Reference: a = %d, b = %d\n", a, b);
+
+    // Call the function passing addresses
+    swapByReference(&a, &b);
+
+    printf("After swapping using Call By Reference: a = %d, b = %d\n", a, b);
 
     return 0;
 }
@@ -29,32 +53,61 @@ int main() {
 PROGRAM 2
 
 #include <stdio.h>
-#include <ctype.h>
+#include <stdlib.h>
 
-int main() {
-    char input[100];
-    
-    // Get input from the user
-    printf("Enter input string: ");
-    scanf("%s", input);
+int* findDuplicates(int N, int arr[]) {
+    int* duplicates = (int*)malloc(N * sizeof(int));
+    int i, idx, count = 0;
 
-    // Process the input and generate the output
-    for (int i = 0; input[i] != '\0';) {
-        char current_char = input[i];
-        i++;
-
-        int count = 0;
-        while (isdigit(input[i])) {
-            count = count * 10 + (input[i] - '0');
-            i++;
-        }
-
-        for (int j = 0; j < count; j++) {
-            printf("%c", current_char);
+    for (i = 0; i < N; i++) {
+        idx = abs(arr[i]);
+        if (arr[idx] >= 0) {
+            arr[idx] = -arr[idx];
+        } else {
+            duplicates[count++] = idx;
         }
     }
 
+    if (count == 0) {
+        duplicates[0] = -1;
+        return duplicates;
+    } else {
+        // Sort the duplicates in ascending order
+        for (i = 0; i < count - 1; i++) {
+            for (int j = i + 1; j < count; j++) {
+                if (duplicates[i] > duplicates[j]) {
+                    int temp = duplicates[i];
+                    duplicates[i] = duplicates[j];
+                    duplicates[j] = temp;
+                }
+            }
+        }
+        return duplicates;
+    }
+}
+
+int main() {
+    int N1 = 4;
+    int arr1[] = {0, 3, 1, 2};
+    int* result1 = findDuplicates(N1, arr1);
+
+    printf("Example 1 Output: ");
+    for (int i = 0; result1[i] != -1 && i < N1; i++) {
+        printf("%d ", result1[i]);
+    }
     printf("\n");
+    free(result1);
+
+    int N2 = 5;
+    int arr2[] = {2, 3, 1, 2, 3};
+    int* result2 = findDuplicates(N2, arr2);
+
+    printf("Example 2 Output: ");
+    for (int i = 0; result2[i] != -1 && i < N2; i++) {
+        printf("%d ", result2[i]);
+    }
+    printf("\n");
+    free(result2);
 
     return 0;
 }
@@ -64,20 +117,37 @@ PROGRAM 3
 
 #include <stdio.h>
 
-int main() {
-    int rows, i, j;
+void printUnion(int arr1[], int n, int arr2[], int m) {
+    int i = 0, j = 0;
 
-    // Get the number of rows from the user
-    printf("Enter the number of rows: ");
-    scanf("%d", &rows);
-
-    // Print the pattern
-    for (i = 1; i <= rows; i++) {
-        for (j = 1; j <= i; j++) {
-            printf("* ");
+    while (i < n && j < m) {
+        if (arr1[i] < arr2[j]) {
+            printf("%d ", arr1[i++]);
+        } else if (arr2[j] < arr1[i]) {
+            printf("%d ", arr2[j++]);
+        } else {
+            printf("%d ", arr2[j++]);
+            i++;
         }
-        printf("\n");
     }
+
+    while (i < n) {
+        printf("%d ", arr1[i++]);
+    }
+
+    while (j < m) {
+        printf("%d ", arr2[j++]);
+    }
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {1, 2, 3};
+    int n = sizeof(arr1) / sizeof(arr1[0]);
+    int m = sizeof(arr2) / sizeof(arr2[0]);
+
+    printf("Union of the arrays: ");
+    printUnion(arr1, n, arr2, m);
 
     return 0;
 }
